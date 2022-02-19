@@ -1,75 +1,99 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
+</html>
 <head>
-    <title>Socket.IO chat</title>
-    <style>
-        body {
-            margin: 0;
-            padding-bottom: 3rem;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-        }
-
-        #form {
-            background: rgba(0, 0, 0, 0.15);
-            padding: 0.25rem;
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            display: flex;
-            height: 3rem;
-            box-sizing: border-box;
-            backdrop-filter: blur(10px);
-        }
-
-        #input {
-            border: none;
-            padding: 0 1rem;
-            flex-grow: 1;
-            border-radius: 2rem;
-            margin: 0.25rem;
-        }
-
-        #input:focus {
-            outline: none;
-        }
-
-        #form>button {
-            background: #333;
-            border: none;
-            padding: 0 1rem;
-            margin: 0.25rem;
-            border-radius: 3px;
-            outline: none;
-            color: #fff;
-        }
-
-        #messages {
-            list-style-type: none;
-            margin: 0;
-            padding: 0;
-        }
-
-        #messages>li {
-            padding: 0.5rem 1rem;
-        }
-
-        #messages>li:nth-child(odd) {
-            background: #efefef;
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Markers</title>
+    <style type="text/css">
+        /* Set the size of the div element that contains the map */
+        #map {
+            height: 400px;
+            width: 100%;
         }
     </style>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=default"></script>
+    <!-- <link rel="stylesheet" type="text/css" href="./style.css" /> -->
+    <!-- <script src="./server.js"></script> -->
 </head>
 
 <body>
-    <ul id="messages"></ul>
-    <form id="form" action="">
-        <input id="input" autocomplete="off" /><button>Send</button>
-    </form>
+    <h1>DMS(Degree Minutes Seconds)</h1>
+    <p id="finalGPS"> GPS: </p>
+    <p id="dd.lat"> lat from SP: </p>
+    <p id="dd.long"> long from SP: </p>
+
+    <div id="floating-panel">
+    </div>
+    <div id="map"></div>
+    <script src="http://maps.googleapis.com/maps/api/js?sensor=true"></script>
+    <div id="map-canvas"></div>
+
     <script src="/socket.io/socket.io.js"></script>
-    <script>
-        var socket = io();
+    <!-- <script src="../test.json" type="text/javascript"> -->
+    <script type="text/javascript">
+        let socket = io.connect();
+        let lat;
+        let long;
+        let latlng = { lat: 37.556849, lng: 126.902491 };
+        let map;
+        let marker;
+
+        socket.on("dd.lat", function (data) {
+            lat = Number(data);
+            latlng.lat = Number(data);
+            // console.log('lat: ' + lat);
+            document.getElementById("dd.lat").textContent = "lat: " + data;
+        });
+
+        socket.on("dd.long", function (data) {
+            long = Number(data);
+            latlng.long = Number(data);
+            // console.log('long: ' + long);
+            document.getElementById("dd.long").textContent = "long: " + data;
+        });
+
+        socket.on("finalGPS", function (data) {
+            document.getElementById("finalGPS").innerHTML = "finalGPS: " + data;
+        });
+
+        // Initialize and add the map
+        function initMap() {
+            map = new google.maps.Map(document.getElementById("map"), {
+                zoom: 18,
+                center: { lat: 37.556849, lng: 126.902491 },
+                mapTypeId: google.maps.MapTypeId.ROADMAP
+            });
+            marker = new google.maps.Marker({
+                position: { lat: 37.556849, lng: 126.902491 },
+                map: map,
+            });
+        }
+
+        setInterval(markerRefresh, 3000);
+        setInterval(deleteMarker, 2999);
+
+        function markerRefresh() {
+            latlng = new google.maps.LatLng(lat, long);
+            marker = new google.maps.Marker({
+                position: latlng,
+                map: map,
+                zoom: 18
+            });
+            marker.setMap(map);
+            map.panTo(latlng);
+
+        }
+
+        function deleteMarker() {
+            marker.setMap(null);
+        }
     </script>
+
+    <!-- Async script executes immediately and must be after any DOM elements used in callback. -->
+    <script defer
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCLQrhUDmE1kzLj6ZyFldcHs9BaXgq2UOw&callback=initMap"></script>
 </body>
 
 </html>
