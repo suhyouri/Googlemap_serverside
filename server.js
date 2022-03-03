@@ -36,10 +36,13 @@ app.post("/gps", (req, res) => {
   console.log(req.body.lat);
   console.log(req.body.long);
   console.log(req.body.gpsdms);
+
   gpsData.lat = req.body.lat;
   gpsData.long = req.body.long;
   gpsData.gpsdms = req.body.gpsdms;
+
   res.json(gpsData);
+  
   // -----> Data to send to html
   io.emit("dd.lat", gpsData.lat);
   io.emit("dd.long", gpsData.long);

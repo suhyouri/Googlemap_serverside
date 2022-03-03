@@ -1,7 +1,7 @@
 {
   "name": "untitled-folder",
   "version": "1.0.0",
-  "description": "",
+  "description": "1. make API using app.get() 2. set app.post() to get value from client side 3. In RPI4, Test if this process works!     curl -d API -H 'Content-Type: application/json' http://{pulicip:portnumber/APIname} ====> Later, HTTP Request Setup",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -12,5 +12,13 @@
   "dependencies": {
     "express": "^4.17.3",
     "socket.io": "^4.4.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/suhyouri/Googlemap_serverside.git"
+  },
+  "bugs": {
+    "url": "https://github.com/suhyouri/Googlemap_serverside/issues"
+  },
+  "homepage": "https://github.com/suhyouri/Googlemap_serverside#readme"
 }
